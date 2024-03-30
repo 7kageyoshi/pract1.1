@@ -43,6 +43,13 @@ public abstract class PersonBase implements ActionInterface {
         return health;
     }
 
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
     protected int getRound(int origin, int percent)
     {
         if (percent > origin)
@@ -50,7 +57,6 @@ public abstract class PersonBase implements ActionInterface {
         int n = (origin * percent) / 100;
         return origin + (rnd.nextInt(0, n * 2+1)- n);
     }
-
     public void setPosition(int x, int y)
     {
         position.setXY(x, y);
@@ -64,6 +70,7 @@ public abstract class PersonBase implements ActionInterface {
     {
         this.health = Math.min(this.health +health, this.maxHealth);
     }
+
     public int getDamage(int damage)
     {
         boolean probability = (this.agility/2) >= rnd.nextInt(100);
@@ -77,6 +84,7 @@ public abstract class PersonBase implements ActionInterface {
         this.health -= loss;
         return loss;
     }
+
     public PersonBase findNearestPerson(ArrayList<PersonBase> persons)
     {
         PersonBase target = null;
@@ -95,6 +103,11 @@ public abstract class PersonBase implements ActionInterface {
             }
         }
         return target;
+    }
+
+    @Override
+    public String getInfo() {
+        return this.toString() + history;
     }
 
 }

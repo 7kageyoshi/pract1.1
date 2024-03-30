@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public abstract class ShooterBase extends PersonBase {
 
     protected int ammo;
+    protected int maxAmmo;
     protected int level;
     protected int effectiveDistance;
 
@@ -14,10 +15,24 @@ public abstract class ShooterBase extends PersonBase {
     {
         super(name, priority, health, power, agility, defence, distance, pos);
         this.ammo = ammo;
+        this.maxAmmo = ammo;
         this.effectiveDistance = effectiveDistance;
         this.level = 1;
     }
 
+
+    public int getAmmo() {
+        return ammo;
+    }
+
+    public int getMaxAmmo() {
+        return maxAmmo;
+    }
+
+    protected void setAmmo(int ammo)
+    {
+        this.ammo = Math.min(ammo, maxAmmo);
+    }
     protected void shot(PersonBase target)
     {
         ammo--;
@@ -34,19 +49,38 @@ public abstract class ShooterBase extends PersonBase {
             damage *= 2.0f;
         }
         int res = target.getDamage(damage);
+
+        history = String.format(" атаковал %s ", target);
+        if (res == 0)
+        {
+            history += "но он увернулся!";
+        } else {
+            history += "и нанёс ";
+            if (critical)
+            {
+                history += "критический ";
+            }
+            history += "урон в " + res;
+        }
     }
 
     @Override
     public void step(ArrayList<PersonBase> enemies, ArrayList<PersonBase> friends)
     {
-        if (health <= 0 || ammo <= 0)
-        {
+        history = "";
+
+        if (health <= 0)
             return;
-        }
-        PersonBase target = this.findNearestPerson(enemies);
-        if (target != null)
+
+        if (ammo > 0)
         {
-            shot(target);
+            PersonBase target = this.findNearestPerson(enemies);
+            if (target != null)
+            {
+                shot(target);
+            }
+        } else {
+            history = String.format(" ждёт подвоза стрел.");
         }
     }
 
